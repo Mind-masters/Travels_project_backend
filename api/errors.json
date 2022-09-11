@@ -1,0 +1,5 @@
+{
+  "400": ["user-incorrect-password"],
+  "404": ["user-not-found"],
+  "422": ["email-exited"]
+}
