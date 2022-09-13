@@ -37,6 +37,9 @@ class Places{
             res.status(501).send({message: "error in adding new place"});
         }
     }
+    //delete
+
+    // /update
 
 }
 

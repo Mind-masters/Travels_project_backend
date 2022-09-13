@@ -75,7 +75,7 @@ userSchema.methods.validatePassword = function (password) {
   return this.hash === hash;
 };
 
-userSchema.methods.generateToken = function (member = false) {
+userSchema.methods.generateToken = async function (member = false) {
   let expiresIn = "1d";
   if (member) expiresIn = "365d";
   const payload = {
@@ -84,7 +84,7 @@ userSchema.methods.generateToken = function (member = false) {
     id: this._id,
   };
 
-  const secret = process.env.SECRET;
+  const secret = process.env.CLIENT_SECRET;
   const options = {
     expiresIn,
   };
