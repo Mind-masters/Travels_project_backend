@@ -10,7 +10,7 @@ class Places{
             const places = await PlaceModel.find();
             res.status(200).send({places});
         } catch (err) {
-            res.status(501).send({message: "Error in fetching all places"});
+            res.status(400).send(err);
         }
     }
 
@@ -34,7 +34,7 @@ class Places{
             res.status(200).send(createdPlace);
         } catch (err) {
             console.log("error: ", err)
-            res.status(501).send({message: "error in adding new place"});
+            res.status(400).send(err);
         }
     }
     //delete
