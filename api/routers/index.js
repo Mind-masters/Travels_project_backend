@@ -11,5 +11,5 @@ module.exports = function (app) {
   // Client
 
   app.use("/client", middlewareOptions.client);
-  app.use("/client", require("./client/auth.routers"));
+  app.use("/client", require("./client/auth.router"));
 };
