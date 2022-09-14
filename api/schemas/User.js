@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const Helpers = require("../../plugins/Helpers");
 const crypto = require("crypto");
+const PlaceModel = require('./Place');
 const jwt = require("jsonwebtoken");
 const { validateEmailRegex } = require("../validations/auth");
 const { string } = require("joi");
@@ -55,6 +56,7 @@ const userSchema = new mongoose.Schema(
       required: true,
       default: "active", // active || inactive
     },
+    places: []
   },
   {
     timestamps: {
