@@ -1,4 +1,3 @@
-// const placeModel = require("../../schemas/Place");
 const PlaceModel = require("../../schemas/Place");
 
 
@@ -16,6 +15,8 @@ class Places{
 
     static async addNewPlace(req,res,next){
         const { title, image, description, address } = req.body;
+
+        
 
         const createdPlace = new PlaceModel({
             title,
@@ -37,9 +38,36 @@ class Places{
             res.status(400).send(err);
         }
     }
-    //delete
 
-    // /update
+    static async updatePlace (req,res,next){
+        const {title, description} = req.body;
+        const placeId = req.params.pid;
+
+        console.log("title: ", title, " | description: ", description, " | id: ", placeId)
+
+        try {
+            const place = await PlaceModel.findById(placeId);
+    
+            place.title = title,
+            place.description = description;
+    
+            await place.save();
+    
+        } catch (err) {
+            console.log(err);    
+        }
+    
+        return res.status(200).json({message: "Updated!"});
+    }
+    
+    static async deletePlace (req,res,next){
+        const placeId = req.params.pid;
+    
+        let place;
+
+        return place;
+    
+    }
 
 }
 
