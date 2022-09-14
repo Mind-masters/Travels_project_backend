@@ -4,12 +4,12 @@ module.exports = function (app) {
 
   app.use("/admin", middlewareOptions.admin);
 
-  // User
-
-  app.use("/user", middlewareOptions.user);
-
   // Client
 
   app.use("/client", middlewareOptions.client);
   app.use("/client", require("./client/auth.router"));
+  // User
+
+  app.use("/user", middlewareOptions.user);
+  app.use("/user", require("./user/user.router"));
 };

@@ -10,32 +10,33 @@ const getTokenFromHeaders = function (req) {
   return null;
 };
 
-const isRevokedCallbackClient = function (req, payload, done) {
-  req.payload = payload;
-  return done(null);
+const isRevokedCallbackClient = async function (req, token) {
+  req.token = token;
+  return true;
 };
-const isRevokedCallbackAdmin= function (req, payload, done) {
-  req.payload = payload;
-  if(!['admin'].includes(payload.role)){
-    return done('Access denied')
-  }
-  return done(null);
-};
-
-const isRevokedCallbackUser= function (req, payload, done) {
+const isRevokedCallbackAdmin = async function (req, token,done) {
   try {
-    req.payload = payload;
-    return done(null);
+    req.token = token;
+    return token === "undefined" && !["admin"].includes(token.payload.ole);
   } catch (error) {
-    return done('has an error')
+    return done("has an error");
   }
-
 };
+
+const isRevokedCallbackUser = async function (req, token, done) {
+  try {
+    req.token = token;
+    return token === "undefined";
+  } catch (error) {
+    return done("has an error");
+  }
+};
+
 
 // 2 options algorithms HS256/RS256
 const middlewareOptions = {
   client: jwt({
-    secret: process.env.CLIENT_SECRET,
+    secret: process.env.USER_SECRET,
     algorithms: ["HS256"],
     credentialsRequired: false,
     getToken: getTokenFromHeaders,
@@ -53,7 +54,7 @@ const middlewareOptions = {
     secret: process.env.ADMIN_SECRET,
     algorithms: ["HS256"],
     getToken: getTokenFromHeaders,
-    isRevoked: isRevokedCallbackClient,
+    isRevoked: isRevokedCallbackAdmin,
     userProperty: "payload",
   }),
 };
