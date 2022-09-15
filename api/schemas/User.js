@@ -4,6 +4,7 @@ const crypto = require("crypto");
 const PlaceModel = require('./Place');
 const jwt = require("jsonwebtoken");
 const { validateEmailRegex } = require("../validations/auth");
+const { string } = require("joi");
 
 const userSchema = new mongoose.Schema(
   {
@@ -20,7 +21,6 @@ const userSchema = new mongoose.Schema(
     email: {
       type: String,
       match: validateEmailRegex,
-
       require: true,
     },
     phone: {
@@ -51,14 +51,18 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    // places: [{type: Schema.Types.ObjectId, required: true, ref: "Place"}],
-
-    
+    status: {
+      type: String,
+      required: true,
+      default: "active", // active || inactive
+    },
+    places: []
   },
   {
     timestamps: {
       createAt: "created_at",
       updatedAt: "updated_at",
+      currentTime: () => new Date().toLocaleString(),
     },
   }
 );
@@ -88,7 +92,7 @@ userSchema.methods.generateToken = async function (member = false) {
     id: this._id,
   };
 
-  const secret = process.env.CLIENT_SECRET;
+  const secret = process.env.USER_SECRET;
   const options = {
     expiresIn,
   };
@@ -106,6 +110,7 @@ userSchema.methods.jsonData = function () {
     address: this.address,
     avatar: this.avatar,
     backgroundImage: this.backgroundImage,
+    status: this.status,
   };
 };
 userSchema.pre(/'updateOne | findOneAndUpdate'/, function (next) {

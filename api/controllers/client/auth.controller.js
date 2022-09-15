@@ -36,6 +36,8 @@ class AuthController {
 
       if (!existing_user.validatePassword(req.body.password))
         return res.status(400).send({ error: "user-incorrect-password" });
+      if (existing_user.status !== "active")
+        return res.status(400).send({ error: "user-account-inactive" });
       let token = await AuthController.generateToken(
         {
           id: existing_user._id,
@@ -54,7 +56,7 @@ class AuthController {
   static async generateToken(payload, remember = false) {
     let expiresIn = "1d";
     if (remember) expiresIn = "365d";
-    const secret = process.env.CLIENT_SECRET;
+    const secret = process.env.USER_SECRET;
     const options = { expiresIn };
 
     const token = jwt.sign(payload, secret, options);
