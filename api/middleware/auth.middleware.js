@@ -11,12 +11,13 @@ const getTokenFromHeaders = function (req) {
 };
 
 const isRevokedCallbackClient = async function (req, token) {
-  req.token = token;
+  req.payload = token.payload;
+
   return true;
 };
-const isRevokedCallbackAdmin = async function (req, token,done) {
+const isRevokedCallbackAdmin = async function (req, token, done) {
   try {
-    req.token = token;
+    req.payload = token.payload;
     return token === "undefined" && !["admin"].includes(token.payload.ole);
   } catch (error) {
     return done("has an error");
@@ -25,13 +26,12 @@ const isRevokedCallbackAdmin = async function (req, token,done) {
 
 const isRevokedCallbackUser = async function (req, token, done) {
   try {
-    req.token = token;
+    req.payload = token.payload;
     return token === "undefined";
   } catch (error) {
     return done("has an error");
   }
 };
-
 
 // 2 options algorithms HS256/RS256
 const middlewareOptions = {

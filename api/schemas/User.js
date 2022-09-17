@@ -1,11 +1,17 @@
 const mongoose = require("mongoose");
 const Helpers = require("../../plugins/Helpers");
 const crypto = require("crypto");
-const PlaceModel = require('./Place');
 const jwt = require("jsonwebtoken");
 const { validateEmailRegex } = require("../validations/auth");
 const { string } = require("joi");
 
+const places = new mongoose.Schema({
+  place_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "places",
+    require: false,
+  },
+});
 const userSchema = new mongoose.Schema(
   {
     firstName: {
@@ -56,7 +62,6 @@ const userSchema = new mongoose.Schema(
       required: true,
       default: "active", // active || inactive
     },
-    places: []
   },
   {
     timestamps: {
@@ -115,7 +120,7 @@ userSchema.methods.jsonData = function () {
 };
 userSchema.pre(/'updateOne | findOneAndUpdate'/, function (next) {
   this.set({
-    updatedAt: Helpers.getTimeWithoutMilliSeconds(),
+    updatedAt: new Date().toLocaleString(),
   });
 
   next();

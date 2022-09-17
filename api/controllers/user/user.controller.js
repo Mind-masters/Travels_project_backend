@@ -17,6 +17,7 @@ class UserController {
         .findByIdAndUpdate(
           {
             _id: req.token.payload.id,
+            status: "active",
           },
           data,
           {

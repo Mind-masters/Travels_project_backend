@@ -5,7 +5,7 @@ module.exports = function (app) {
   // app.use("/admin", admin);
 
   // Client
-
+  
   // app.use("/client", client);
   app.use("/client", middlewareOptions.client);
   app.use("/client", require("./client/auth.router"));
@@ -13,4 +13,5 @@ module.exports = function (app) {
 
   app.use("/user", middlewareOptions.user);
   app.use("/user", require("./user/user.router"));
+  app.use("/user", require("./user/places.router"));
 };
