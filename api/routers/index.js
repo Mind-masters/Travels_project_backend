@@ -13,6 +13,8 @@ module.exports = function (app) {
   // app.use("/client", client);
   app.use("/client", middlewareOptions.client);
   app.use("/client", require("./client/auth.router"));
+  app.use("/client", require("./client/places.router"));
+
   // User
 
   app.use("/user", middlewareOptions.user);
