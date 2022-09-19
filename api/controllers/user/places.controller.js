@@ -5,7 +5,6 @@ class Places {
 
   static async create(req, res) {
     const { title, image, description, address } = req.body;
-
     try {
       const user = await userModel.findOne({
         _id: req.payload.id,
