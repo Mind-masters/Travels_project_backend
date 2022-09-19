@@ -3,13 +3,16 @@ const userModel = require("../../schemas/User");
 
 class Places {
   static async getAll(req, res) {
+    // console.log("ok: ",  req.payload.id)
     console.log(Math.round(new Date().getTime()/ 100))
     try {
       const places = await placeModel.find({
-        user_id: req.payload.id,
+        // user_id: req.payload.id,
         deleted: false,
       });
-      res.status(200).send(places.jsonData());
+
+      console.log("places: ", places)
+      res.status(200).send(places);
     } catch (err) {
       res.status(400).send(err);
     }

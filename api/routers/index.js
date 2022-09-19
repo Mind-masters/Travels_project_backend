@@ -11,7 +11,7 @@ module.exports = function (app) {
   // Client
   
   // app.use("/client", client);
-  app.use("/client", middlewareOptions.client);
+  // app.use("/client", middlewareOptions.client);
   app.use("/client", require("./client/auth.router"));
   app.use("/client", require("./client/places.router"));
 

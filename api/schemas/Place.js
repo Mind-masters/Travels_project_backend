@@ -31,6 +31,7 @@ const placeSchema = new mongoose.Schema(
 );
 
 placeSchema.methods.jsonData = function () {
+
   return {
     title: this.title,
     description: this.description,
