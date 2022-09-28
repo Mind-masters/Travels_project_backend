@@ -14,14 +14,9 @@ const places = new mongoose.Schema({
 });
 const userSchema = new mongoose.Schema(
   {
-    firstName: {
+    name: {
       type: String,
-      require: false,
-      default: "",
-    },
-    lastName: {
-      type: String,
-      require: false,
+      require: true,
       default: "",
     },
     email: {
@@ -108,8 +103,7 @@ userSchema.methods.generateToken = async function (member = false) {
 
 userSchema.methods.jsonData = function () {
   return {
-    firstName: this.firstName,
-    lastName: this.lastName,
+    name:this.name,
     email: this.email,
     phone: this.phone,
     address: this.address,

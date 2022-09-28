@@ -4,13 +4,14 @@ const { register, login } = require("../../validations/auth");
 const jwt = require("jsonwebtoken");
 class AuthController {
   static async register(req, res) {
-
     try {
-      const { email, password } = req.body;
+      const { name, email, password, confirmPassword, isAccepted } = req.body;
       await register.validateAsync(req.body);
       let user_model = new UserModel({
         email,
         password,
+        confirmPassword,
+        name,
       });
       user_model.setPassword(password);
 
@@ -27,7 +28,6 @@ class AuthController {
   }
 
   static async login(req, res) {
-
     try {
       const existing_user = await UserModel.findOne({
         email: req.body.email,
@@ -44,6 +44,7 @@ class AuthController {
         {
           id: existing_user._id,
           email: existing_user.email,
+          status: existing_user.status
         },
         existing_user.remember
       );
