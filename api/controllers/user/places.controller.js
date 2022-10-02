@@ -8,7 +8,7 @@ class Places {
     try {
       const user = await userModel.findOne({
         _id: req.payload.id,
-      });
+      }).select('_id');
       if (!user) return res.status(404).send({ error: "user-not-found" });
       const createdPlace = new placeModel({
         title,

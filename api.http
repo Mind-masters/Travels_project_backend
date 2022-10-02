@@ -17,3 +17,9 @@ content-type: application/json
 ###Place
 
 GET  http://localhost:5000/api/v1/client/places/all
+
+
+### user profile
+GET  http://localhost:5000/api/v1/user/me/profile
+content-type: application/json
+Authorization: Bearer 

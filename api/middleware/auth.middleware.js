@@ -36,7 +36,7 @@ const isRevokedCallbackUser = async function (req, token, done) {
 // 2 options algorithms HS256/RS256
 const middlewareOptions = {
   client: jwt({
-    secret: process.env.USER_SECRET,
+    secret: process.env.ACCESS_TOKEN_SECRET,
     algorithms: ["HS256"],
     credentialsRequired: false,
     getToken: getTokenFromHeaders,
@@ -44,7 +44,7 @@ const middlewareOptions = {
     userProperty: "payload",
   }),
   user: jwt({
-    secret: process.env.USER_SECRET,
+    secret: process.env.ACCESS_TOKEN_SECRET,
     algorithms: ["HS256"],
     getToken: getTokenFromHeaders,
     isRevoked: isRevokedCallbackUser,
