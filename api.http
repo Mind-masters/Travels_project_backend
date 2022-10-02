@@ -1,0 +1,19 @@
+
+
+##Registration
+POST  http://localhost:5000/api/v1/client/auth/register
+
+###Login
+POST  http://localhost:5000/api/v1/client/auth/login HTTP/1.1
+User-Agent: rest-client
+Accept-Language: en-GB,en-US;q=0.8,en;q=0.6,zh-CN;q=0.4
+content-type: application/json
+
+{
+  "email": "hoangdinh2411@gmail.com",
+  "password":"mindmaster"
+}
+
+###Place
+
+GET  http://localhost:5000/api/v1/client/places/all

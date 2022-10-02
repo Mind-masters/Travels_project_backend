@@ -18,7 +18,7 @@ const isRevokedCallbackClient = async function (req, token) {
 const isRevokedCallbackAdmin = async function (req, token, done) {
   try {
     req.payload = token.payload;
-    return token === "undefined" && !["admin"].includes(token.payload.ole);
+    return token === "undefined" && !["admin"].includes(token.payload.role);
   } catch (error) {
     return done("has an error");
   }

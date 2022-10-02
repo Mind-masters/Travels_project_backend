@@ -3,11 +3,15 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const db = require("./plugins/db");
+const helmet = require('helmet')
+
 require("dotenv").config({
   path: "./.env",
 });
 
 const app = express();
+app.use(helmet())
+
 dotenv.config();
 app.use(bodyParser.json({ extended : true}));
 app.use(bodyParser.urlencoded({ extended : true}));

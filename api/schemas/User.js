@@ -16,12 +16,14 @@ const userSchema = new mongoose.Schema(
   {
     name: {
       type: String,
-      require: true,
+      require: false,
       default: "",
     },
     email: {
       type: String,
       match: validateEmailRegex,
+      unique: true,
+      dropDups: true,
       require: true,
     },
     phone: {
@@ -52,9 +54,16 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    refresh_token: {
+      type: String,
+      default: "",
+    },
+    access_token: {
+      type: String,
+      default: "",
+    },
     status: {
       type: String,
-      required: true,
       default: "active", // active || inactive
     },
   },
@@ -103,7 +112,7 @@ userSchema.methods.generateToken = async function (member = false) {
 
 userSchema.methods.jsonData = function () {
   return {
-    name:this.name,
+    name: this.name,
     email: this.email,
     phone: this.phone,
     address: this.address,
@@ -116,11 +125,9 @@ userSchema.pre(/'updateOne | findOneAndUpdate'/, function (next) {
   this.set({
     updatedAt: new Date().toLocaleString(),
   });
-
   next();
 });
 
-userSchema.pre("save", function () {});
 const userModel = mongoose.model("user", userSchema, "user");
 
 module.exports = userModel;

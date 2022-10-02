@@ -7,13 +7,13 @@ const register = Joi.object({
   name: Joi.string().required(),
   email: Joi.string().regex(validateEmailRegex).required(),
   password: Joi.string().min(6).max(16).required(),
-  confirmPassword: Joi.ref('password')
+  confirmPassword: Joi.ref("password"),
 }).required();
 
 const login = Joi.object({
   email: Joi.string().regex(validateEmailRegex).required(),
   password: Joi.string().min(6).max(16).required(),
-  remember: Joi.boolean().allow(false)
+  remember: Joi.boolean(),
 });
 
 module.exports = {
