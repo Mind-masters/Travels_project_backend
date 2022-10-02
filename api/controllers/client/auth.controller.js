@@ -16,9 +16,16 @@ class AuthController {
       return user_model
         .save()
         .then((user) => {
-          if (user)
-            return res.status(200).send({ success: "register-success" });
+          if (user) {
+            let token = AuthController.generateToken({
+              id: existing_user._id,
+              email: existing_user.email,
+              status: existing_user.status,
+            });
+            return token;
+          }
         })
+        .then((token) => res.status(200).send({ status: "success", ...token }))
         .catch((error) => res.status(422).send({ error: "email-exited" }));
     } catch (error) {
       return res.status(400).send(error);
@@ -34,7 +41,7 @@ class AuthController {
       if (!existing_user)
         return res.status(404).send({ error: "user-not-found" });
 
-      // await login.validateAsync(req.body);
+      await login.validateAsync(req.body)
       if (!existing_user.validatePassword(req.body.password))
         return res.status(400).send({ error: "user-incorrect-password" });
       if (existing_user.status !== "active")
@@ -50,17 +57,15 @@ class AuthController {
     }
   }
   static async generateToken(payload) {
-    let expiresIn = "2h";
-    const options = { expiresIn };
-    let refresh_token;
+    const options = { expiresIn: "2h" };
     let access_token = jwt.sign(
       payload,
       process.env.ACCESS_TOKEN_SECRET,
       options
     );
 
-    refresh_token = jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET, {
-      expiresIn: "365d",
+    let refresh_token = jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET, {
+      expiresIn: "7d",
     });
     await UserModel.findByIdAndUpdate(
       {
