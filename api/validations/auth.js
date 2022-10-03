@@ -13,7 +13,6 @@ const register = Joi.object({
 const login = Joi.object({
   email: Joi.string().regex(validateEmailRegex).required(),
   password: Joi.string().min(6).max(16).required(),
-  remember: Joi.boolean(),
 });
 
 module.exports = {

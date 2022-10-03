@@ -5,28 +5,35 @@ const jwt = require("jsonwebtoken");
 class AuthController {
   static async register(req, res) {
     try {
-      const { name, email, password , isAccepted} = req.body;
+      const { name, email, password, isAccepted } = req.body;
+
       await register.validateAsync(req.body);
       let user_model = new UserModel({
         name,
         email: email.trim().toLowerCase(),
-        isAccepted
+        isAccepted,
       });
       user_model.setPassword(password);
 
       return user_model
         .save()
-        .then((user) => {
+        .then(async (user) => {
           if (user) {
-            let token = AuthController.generateToken({
+            let token = await AuthController.generateToken({
               id: user._id,
               email: user.email,
               status: user.status,
             });
-            return token;
+            const data = user.jsonData();
+            return {
+              token,
+              data,
+            };
           }
         })
-        .then((token) => res.status(200).send({ status: "success", ...token }))
+        .then((data) => {
+          return res.status(200).send({ status: "success", ...data });
+        })
         .catch((error) => res.status(422).send({ error }));
     } catch (error) {
       return res.status(400).send(error);
@@ -43,16 +50,18 @@ class AuthController {
         return res.status(404).send({ error: "user-not-found" });
 
       await login.validateAsync(req.body);
-      if (!existing_user.validatePassword(req.body.password))
-        return res.status(400).send({ error: "user-incorrect-password" });
       if (existing_user.status !== "active")
         return res.status(400).send({ error: "user-account-inactive" });
+      if (!existing_user.validatePassword(req.body.password))
+        return res.status(400).send({ error: "user-incorrect-password" });
+
       let token = await AuthController.generateToken({
         id: existing_user._id,
         email: existing_user.email,
         status: existing_user.status,
       });
-      return res.status(200).send({ status: "success", ...token });
+      const data = existing_user.jsonData();
+      return res.status(200).send({ status: "success", data, token });
     } catch (error) {
       return res.status(500).send(error);
     }

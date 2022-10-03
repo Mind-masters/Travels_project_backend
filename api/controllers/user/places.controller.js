@@ -2,13 +2,12 @@ const placeModel = require("../../schemas/Place");
 const userModel = require("../../schemas/User");
 
 class Places {
-
   static async create(req, res) {
     const { title, image, description, address } = req.body;
     try {
       const user = await userModel.findOne({
         _id: req.payload.id,
-      }).select('_id');
+      });
       if (!user) return res.status(404).send({ error: "user-not-found" });
       const createdPlace = new placeModel({
         title,

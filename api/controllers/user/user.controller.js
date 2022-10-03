@@ -5,10 +5,11 @@ class UserController {
     try {
       const existing_user = await userModel.findOne({
         _id: req.payload.id,
-      },['-refresh_token', '-access_token','-hash','-salt'])
+      });
+      const data = existing_user.jsonData();
       if (!existing_user) return res.status(404).send("user-not-found");
       return res.status(200).send({
-        user: existing_user,
+        data,
       });
     } catch (error) {
       return res.status(400).send(error);
@@ -26,18 +27,17 @@ class UserController {
       backgroundImage,
     };
     try {
-      const user = await userModel
-        .findByIdAndUpdate(
-          {
-            _id: req.payload.id,
-            status: "active",
-          },
-          data,
-          {
-            new: true,
-          },
-        ).select('_id')
-        console.log(user)
+      const user = await userModel.findByIdAndUpdate(
+        {
+          _id: req.payload.id,
+          status: "active",
+        },
+        data,
+        {
+          new: true,
+        }
+      );
+
       if (!user) return res.status(404).send("user-not-found");
       return res.status(200).send("user-updated-success");
     } catch (error) {
@@ -60,7 +60,7 @@ class UserController {
           {
             new: true,
           }
-        ).select('_id')
+        )
       if (!user) return res.status(404).send("user-not-found");
       return res.status(200).send("user-status-changed");
     } catch (error) {
