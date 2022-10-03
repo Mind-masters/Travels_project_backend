@@ -66,6 +66,9 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: "active", // active || inactive
     },
+    isAccepted: {
+      type: Boolean,
+    },
   },
   {
     timestamps: {
@@ -127,7 +130,6 @@ userSchema.pre(/'updateOne | findOneAndUpdate'/, function (next) {
   });
   next();
 });
-
 
 const userModel = mongoose.model("user", userSchema, "user");
 

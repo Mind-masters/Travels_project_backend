@@ -5,11 +5,12 @@ const jwt = require("jsonwebtoken");
 class AuthController {
   static async register(req, res) {
     try {
-      const { name, email, password } = req.body;
+      const { name, email, password , isAccepted} = req.body;
       await register.validateAsync(req.body);
       let user_model = new UserModel({
         name,
         email: email.trim().toLowerCase(),
+        isAccepted
       });
       user_model.setPassword(password);
 
@@ -18,15 +19,15 @@ class AuthController {
         .then((user) => {
           if (user) {
             let token = AuthController.generateToken({
-              id: existing_user._id,
-              email: existing_user.email,
-              status: existing_user.status,
+              id: user._id,
+              email: user.email,
+              status: user.status,
             });
             return token;
           }
         })
         .then((token) => res.status(200).send({ status: "success", ...token }))
-        .catch((error) => res.status(422).send({ error: "email-exited" }));
+        .catch((error) => res.status(422).send({ error }));
     } catch (error) {
       return res.status(400).send(error);
     }
@@ -41,7 +42,7 @@ class AuthController {
       if (!existing_user)
         return res.status(404).send({ error: "user-not-found" });
 
-      await login.validateAsync(req.body)
+      await login.validateAsync(req.body);
       if (!existing_user.validatePassword(req.body.password))
         return res.status(400).send({ error: "user-incorrect-password" });
       if (existing_user.status !== "active")
