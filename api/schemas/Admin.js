@@ -1,8 +1,12 @@
 const mongoose = require("mongoose");
+const Helpers = require("../../plugins/Helpers");
 const crypto = require("crypto");
+const jwt = require("jsonwebtoken");
 const { validateEmailRegex } = require("../validations/auth");
+const { string } = require("joi");
 
-const userSchema = new mongoose.Schema(
+
+const adminSchema = new mongoose.Schema(
   {
     name: {
       type: String,
@@ -13,26 +17,19 @@ const userSchema = new mongoose.Schema(
       type: String,
       match: validateEmailRegex,
       unique: true,
+      dropDups: true,
       require: true,
     },
     phone: {
       type: String,
-      require: false,
       default: "",
     },
     address: {
       type: String,
-      require: false,
       default: "",
     },
     avatar: {
       type: String,
-      required: false,
-      default: "",
-    },
-    backgroundImage: {
-      type: String,
-      required: false,
       default: "",
     },
     salt: {
@@ -47,45 +44,17 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
-    interests: {
-      type: [String],
-      default: [],
-    },
-    biography: {
-      type: String,
-      default: "",
-    },
-    location: {
-      type: String,
-      default: "",
-    },
     access_token: {
       type: String,
       default: "",
     },
-    verify: {
-      type: Boolean,
-      default: true,
-    },
     status: {
       type: String,
       default: "active", // active || inactive
-    },
-    isAccepted: {
-      type: Boolean,
-      default: false,
-    },
-    isOnline: {
-      type: Boolean,
-      default: false,
-    },
+    },  
     role: {
       type: String,
-      default: "user", // user || admin
-    },
-    setting: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "setting",
+      default: "admin", // user || admin
     },
   },
   {
@@ -97,42 +66,40 @@ const userSchema = new mongoose.Schema(
   }
 );
 
-userSchema.index({ email: 1 }, { unique: true });
+adminSchema.index({ email: 1 }, { unique: true });
 
-userSchema.methods.setPassword = function (password) {
+adminSchema.methods.setPassword = function (password) {
   this.salt = crypto.randomBytes(16).toString("hex");
   this.hash = crypto
     .pbkdf2Sync(password, this.salt, 10000, 512, "sha512")
     .toString("hex");
 };
 
-userSchema.methods.validatePassword = function (password) {
+adminSchema.methods.validatePassword = function (password) {
   const hash = crypto
     .pbkdf2Sync(password, this.salt, 10000, 512, "sha512")
     .toString("hex");
   return this.hash === hash;
 };
 
-userSchema.methods.jsonData = function () {
+
+adminSchema.methods.jsonData = function () {
   return {
     name: this.name,
     email: this.email,
     phone: this.phone,
     address: this.address,
     avatar: this.avatar,
-    backgroundImage: this.backgroundImage,
-    role: this.role,
-    setting: this.setting,
-    location: this.location,
+    role:this.role
   };
 };
-userSchema.pre(/'updateOne | findOneAndUpdate'/, function (next) {
+adminSchema.pre(/'updateOne | findOneAndUpdate'/, function (next) {
   this.set({
     updatedAt: new Date().toLocaleString(),
   });
   next();
 });
 
-const userModel = mongoose.model("user", userSchema, "user");
+const adminModel = mongoose.model("admin", adminSchema, "admin");
 
-module.exports = userModel;
+module.exports = adminModel;

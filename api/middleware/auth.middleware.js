@@ -10,11 +10,6 @@ const getTokenFromHeaders = function (req) {
   return null;
 };
 
-const isRevokedCallbackClient = async function (req, token) {
-  req.payload = token.payload;
-
-  return true;
-};
 const isRevokedCallbackAdmin = async function (req, token, done) {
   try {
     req.payload = token.payload;
@@ -35,23 +30,15 @@ const isRevokedCallbackUser = async function (req, token, done) {
 
 // 2 options algorithms HS256/RS256
 const middlewareOptions = {
-  client: jwt({
-    secret: process.env.ACCESS_TOKEN_SECRET,
-    algorithms: ["HS256"],
-    credentialsRequired: false,
-    getToken: getTokenFromHeaders,
-    isRevoked: isRevokedCallbackClient,
-    userProperty: "payload",
-  }),
   user: jwt({
-    secret: process.env.ACCESS_TOKEN_SECRET,
+    secret: process.env.JWT_USER_SECRET,
     algorithms: ["HS256"],
     getToken: getTokenFromHeaders,
     isRevoked: isRevokedCallbackUser,
     userProperty: "payload",
   }),
   admin: jwt({
-    secret: process.env.ADMIN_SECRET,
+    secret: process.env.JWT_ADMIN_SECRET,
     algorithms: ["HS256"],
     getToken: getTokenFromHeaders,
     isRevoked: isRevokedCallbackAdmin,

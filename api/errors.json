@@ -1,5 +1,5 @@
 {
-  "400": ["user-incorrect-password","user-account-inactive"],
-  "404": ["user-not-found"],
+  "400": ["user-incorrect-password","user-account-not-verify"],
+  "404": ["user-not-found","admin-not-found"],
   "422": ["email-exited"]
 }

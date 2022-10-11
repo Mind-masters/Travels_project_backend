@@ -1,28 +1,20 @@
-const UserModel = require("../../schemas/User");
+const adminModel = require("../../schemas/Admin");
 const { register, login } = require("../../validations/auth");
 const jwt = require("jsonwebtoken");
-const settingModel = require("../../schemas/Setting");
 class AuthController {
   static async register(req, res) {
+    console.log(req.body)
     try {
-      const { name, email, password, isAccepted } = req.body;
+      const { name, email, password } = req.body;
 
       await register.validateAsync(req.body);
-      const setting = await settingModel.create({
-        following_travelers: false,
-        show_location: false,
-      });
-      let user_model = new UserModel({
-        name,
+      let admin_model = new adminModel({
         email: email.trim().toLowerCase(),
-        isAccepted,
-        role: "user",
-        setting: setting._id,
+        name
       });
+      admin_model.setPassword(password);
 
-      user_model.setPassword(password);
-
-      return user_model
+      return admin_model
         .save()
         .then(async (user) => {
           if (user) {
@@ -32,9 +24,7 @@ class AuthController {
               status: user.status,
               role: user.role,
             });
-            
             const data = user.jsonData();
-
             return {
               token,
               data,
@@ -52,31 +42,28 @@ class AuthController {
 
   static async login(req, res) {
     try {
-      const existing_user = await UserModel.findOne({
+      const existing_admin = await adminModel.findOne({
         email: req.body.email.trim().toLowerCase(),
-        verify: true,
-        role: "user",
-      }).populate("setting");
+        status: "active",
+        role: "admin",
+      });
 
-      if (!existing_user)
+      if (!existing_admin)
         return res.status(404).send({ error: "user-not-found" });
 
       await login.validateAsync(req.body);
-      if (!existing_user.validatePassword(req.body.password))
+      if (!existing_admin.validatePassword(req.body.password))
         return res.status(400).send({ error: "user-incorrect-password" });
-
-      if (existing_user.status !== "active")
+      if (existing_admin.status !== "active")
         return res.status(400).send({ error: "user-account-inactive" });
-      if (!existing_user.verify)
-        return res.status(400).send({ error: "user-account-not-verify" });
 
       let token = await AuthController.generateToken({
-        id: existing_user._id,
-        email: existing_user.email,
-        status: existing_user.status,
-        role: existing_user.role,
+        id: existing_admin._id,
+        email: existing_admin.email,
+        status: existing_admin.status,
+        role: existing_admin.role,
       });
-      const data = existing_user.jsonData();
+      const data = existing_admin.jsonData();
       return res.status(200).send({ status: "success", data, token });
     } catch (error) {
       return res.status(500).send(error);
@@ -84,12 +71,12 @@ class AuthController {
   }
   static async generateToken(payload) {
     const options = { expiresIn: "2h" };
-    let access_token = jwt.sign(payload, process.env.JWT_USER_SECRET, options);
+    let access_token = jwt.sign(payload, process.env.JWT_ADMIN_SECRET, options);
 
-    let refresh_token = jwt.sign(payload, process.env.JWT_USER_SECRET, {
-      expiresIn: "7d",
+    let refresh_token = jwt.sign(payload, process.env.JWT_ADMIN_SECRET, {
+      expiresIn: "1d",
     });
-    await UserModel.findByIdAndUpdate(
+    await adminModel.findByIdAndUpdate(
       {
         _id: payload.id,
       },
@@ -110,3 +97,4 @@ class AuthController {
 }
 
 module.exports = AuthController;
+  
