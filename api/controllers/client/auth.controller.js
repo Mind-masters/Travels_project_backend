@@ -2,6 +2,7 @@ const UserModel = require("../../schemas/User");
 const { register, login } = require("../../validations/auth");
 const jwt = require("jsonwebtoken");
 const settingModel = require("../../schemas/Setting");
+const Helpers = require("../../../plugins/helpers");
 class AuthController {
   static async register(req, res) {
     try {
@@ -32,7 +33,7 @@ class AuthController {
               status: user.status,
               role: user.role,
             });
-            
+
             const data = user.jsonData();
 
             return {
@@ -69,7 +70,22 @@ class AuthController {
         return res.status(400).send({ error: "user-account-inactive" });
       if (!existing_user.verify)
         return res.status(400).send({ error: "user-account-not-verify" });
-
+      let new_login = await Helpers.checkDate(existing_user.last_in_logged);
+      let points = new_login
+        ? (existing_user.points += 1)
+        : existing_user.points;
+      await UserModel.findByIdAndUpdate(
+        {
+          _id: existing_user._id,
+        },
+        {
+          last_in_logged: new Date().toLocaleString(),
+          points,
+        },
+        {
+          new: true,
+        }
+      );
       let token = await AuthController.generateToken({
         id: existing_user._id,
         email: existing_user.email,
