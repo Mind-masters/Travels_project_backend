@@ -89,6 +89,7 @@ const userSchema = new mongoose.Schema(
     },
     last_in_logged: {
       type: Date,
+      default: new Date().toLocaleString(),
     },
     points: {
       type: Number,
@@ -131,7 +132,7 @@ userSchema.methods.jsonData = function () {
     role: this.role,
     setting: this.setting,
     location: this.location,
-    points: this.points
+    points: this.points,
   };
 };
 userSchema.pre(/'updateOne | findOneAndUpdate'/, function (next) {
