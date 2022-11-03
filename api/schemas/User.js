@@ -1,13 +1,12 @@
-const mongoose = require("mongoose");
-const crypto = require("crypto");
-const { validateEmailRegex } = require("../validations/auth");
+const mongoose = require('mongoose')
+const crypto = require('crypto')
+const { validateEmailRegex } = require('../validations/auth')
 
 const userSchema = new mongoose.Schema(
   {
     name: {
       type: String,
       require: false,
-      default: "",
     },
     email: {
       type: String,
@@ -18,22 +17,26 @@ const userSchema = new mongoose.Schema(
     phone: {
       type: String,
       require: false,
-      default: "",
     },
     address: {
       type: String,
       require: false,
-      default: "",
+    },
+    gender: {
+      type: String,
+      require: false,
+    },
+    country: {
+      type: String,
+      require: false,
     },
     avatar: {
       type: String,
       required: false,
-      default: "",
     },
     backgroundImage: {
       type: String,
       required: false,
-      default: "",
     },
     salt: {
       type: String,
@@ -45,23 +48,18 @@ const userSchema = new mongoose.Schema(
     },
     refresh_token: {
       type: String,
-      default: "",
     },
     interests: {
       type: [String],
-      default: [],
     },
     biography: {
       type: String,
-      default: "",
     },
     location: {
       type: String,
-      default: "",
     },
     access_token: {
       type: String,
-      default: "",
     },
     verify: {
       type: Boolean,
@@ -69,7 +67,7 @@ const userSchema = new mongoose.Schema(
     },
     status: {
       type: String,
-      default: "active", // active || inactive
+      default: 'active', // active || inactive
     },
     isAccepted: {
       type: Boolean,
@@ -81,11 +79,15 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      default: "user", // user || admin
+      default: 'user', // user || admin
     },
     setting: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "setting",
+      ref: 'setting',
+    },
+    hobbies: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'hobby',
     },
     last_in_logged: {
       type: Date,
@@ -93,33 +95,33 @@ const userSchema = new mongoose.Schema(
     },
     points: {
       type: Number,
-      default: 1,
+      default: 10,
     },
   },
   {
     timestamps: {
-      createAt: "created_at",
-      updatedAt: "updated_at",
+      createAt: 'created_at',
+      updatedAt: 'updated_at',
       currentTime: () => new Date().toLocaleString(),
     },
   }
-);
+)
 
-userSchema.index({ email: 1 }, { unique: true });
+userSchema.index({ email: 1 }, { unique: true })
 
 userSchema.methods.setPassword = function (password) {
-  this.salt = crypto.randomBytes(16).toString("hex");
+  this.salt = crypto.randomBytes(16).toString('hex')
   this.hash = crypto
-    .pbkdf2Sync(password, this.salt, 10000, 512, "sha512")
-    .toString("hex");
-};
+    .pbkdf2Sync(password, this.salt, 10000, 512, 'sha512')
+    .toString('hex')
+}
 
 userSchema.methods.validatePassword = function (password) {
   const hash = crypto
-    .pbkdf2Sync(password, this.salt, 10000, 512, "sha512")
-    .toString("hex");
-  return this.hash === hash;
-};
+    .pbkdf2Sync(password, this.salt, 10000, 512, 'sha512')
+    .toString('hex')
+  return this.hash === hash
+}
 
 userSchema.methods.jsonData = function () {
   return {
@@ -133,15 +135,15 @@ userSchema.methods.jsonData = function () {
     setting: this.setting,
     location: this.location,
     points: this.points,
-  };
-};
+  }
+}
 userSchema.pre(/'updateOne | findOneAndUpdate'/, function (next) {
   this.set({
     updatedAt: new Date().toLocaleString(),
-  });
-  next();
-});
+  })
+  next()
+})
 
-const userModel = mongoose.model("user", userSchema, "user");
+const userModel = mongoose.model('user', userSchema, 'user')
 
-module.exports = userModel;
+module.exports = userModel

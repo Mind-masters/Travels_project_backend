@@ -7,7 +7,7 @@ class AuthController {
   static async register(req, res) {
     try {
       const { name, email, password, isAccepted } = req.body;
-
+      console.log(req.body)
       await register.validateAsync(req.body);
       const setting = await settingModel.create({
         following_travelers: false,
