@@ -134,7 +134,9 @@ userSchema.methods.jsonData = function () {
     role: this.role,
     setting: this.setting,
     location: this.location,
+    hobbies: this.hobbies,
     points: this.points,
+    gender: this.gender,
   }
 }
 userSchema.pre(/'updateOne | findOneAndUpdate'/, function (next) {

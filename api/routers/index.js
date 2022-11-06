@@ -18,4 +18,5 @@ module.exports = function (app) {
   app.use("/user", middlewareOptions.user);
   app.use("/user", require("./user/auth.router"));
   app.use("/user", require("./user/places.router"));
+  app.use("/user", require("./user/upload.router"));
 };
