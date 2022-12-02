@@ -19,10 +19,11 @@ class Places {
       return createdPlace
         .save()
         .then((place) => {
+          console.log("place: ", place);
           return res.status(200).send("create-place-success");
         })
         .catch((err) => {
-          console.log(err);
+          console.log(err.message);
           return res.status(400).send("something-wrong");
         });
     } catch (err) {

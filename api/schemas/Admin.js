@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const Helpers = require("../../plugins/Helpers");
 const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
 const { validateEmailRegex } = require("../validations/auth");

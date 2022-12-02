@@ -1,6 +1,5 @@
 const { boolean } = require("joi");
 const mongoose = require("mongoose");
-const Helpers = require("../../plugins/Helpers");
 
 const placeSchema = new mongoose.Schema(
   {
