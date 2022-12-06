@@ -5,11 +5,11 @@ const placeSchema = new mongoose.Schema(
   {
     title: { type: String, required: true },
     description: { type: String, required: true },
-    image: { type: String, required: false },
+    image: { type: String, required: true },
     address: { type: String, required: false },
     location: {
-      lat: { type: Number, required: false },
-      lng: { type: Number, required: false },
+      lat: { type: Number, required: true },
+      lng: { type: Number, required: true },
     },
     likes: { type: Array, default: [] },
     comments: { type: Array, default: [] },

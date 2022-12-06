@@ -3,7 +3,8 @@ const userModel = require("../../schemas/User");
 
 class Places {
   static async create(req, res) {
-    const { title, image, description, address } = req.body;
+    const { title, image, description, location } = req.body;
+    console.log("payload: ", req.payload.id);
     try {
       const user = await userModel.findOne({
         _id: req.payload.id,
@@ -13,22 +14,22 @@ class Places {
         title,
         description,
         image,
-        address,
+        location,
         user_id: user._id,
       });
       return createdPlace
         .save()
         .then((place) => {
-          console.log("place: ", place);
-          return res.status(200).send("create-place-success");
+          return res.status(200).send("place created successful");
         })
         .catch((err) => {
-          console.log(err.message);
-          return res.status(400).send("something-wrong");
+          res.statusMessage = err._message || "Something went wrong";
+          res.status(400).end();
         });
     } catch (err) {
       console.log("error: ", err);
-      res.status(400).send(err);
+      res.statusMessage = err || "Something went wrong";
+      res.status(400).end();
     }
   }
 

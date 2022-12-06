@@ -14,7 +14,6 @@ module.exports = function (app) {
   app.use("/client", require("./client/interest.router"));
 
   // User
-
   app.use("/user", middlewareOptions.user);
   app.use("/user", require("./user/auth.router"));
   app.use("/user", require("./user/places.router"));
